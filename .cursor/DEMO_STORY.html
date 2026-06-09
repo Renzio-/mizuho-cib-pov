@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mizuho CIB — Demo Story | Salesforce POV</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.24.2/styles/salesforce-lightning-design-system.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Salesforce+Sans:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --sf-blue:  #0070d2;
+      --sf-dark:  #032d60;
+      --sf-teal:  #00a1e0;
+      --sf-cloud: #f3f2f2;
+      --brand:    #1e3a5f;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Salesforce Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--sf-cloud);
+      color: #181818;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .header {
+      background: var(--sf-dark);
+      color: #fff;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .header__inner {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .header__logo {
+      background: var(--brand);
+      color: #fff;
+      font-weight: 700;
+      font-size: 12px;
+      padding: 4px 12px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+    }
+    .header__title { font-size: 16px; font-weight: 700; }
+    .header__subtitle { font-size: 13px; font-weight: 300; opacity: 0.8; }
+    .header__badges { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; }
+    .badge {
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 12px;
+      white-space: nowrap;
+    }
+    .badge--header {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: rgba(255,255,255,0.9);
+    }
+
+    .page {
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 32px 24px 60px;
+    }
+
+    /* Story-specific styles */
+    .story-meta {
+      background: #fff;
+      border: 1px solid #dddbda;
+      border-radius: 8px;
+      padding: 20px 24px;
+      margin-bottom: 32px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 700px) { .story-meta { grid-template-columns: 1fr; } }
+    .story-meta dt {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #666;
+      margin-bottom: 2px;
+    }
+    .story-meta dd {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--sf-dark);
+    }
+
+    .scene {
+      background: #fff;
+      border: 1px solid #dddbda;
+      border-radius: 8px;
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+    .scene__header {
+      background: var(--brand);
+      color: #fff;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .scene__num {
+      font-size: 24px;
+      font-weight: 700;
+      opacity: 0.6;
+    }
+    .scene__title { font-size: 15px; font-weight: 700; }
+    .scene__time { margin-left: auto; font-size: 12px; opacity: 0.7; }
+    .scene__body { padding: 24px; }
+
+    .narrative {
+      font-size: 15px;
+      line-height: 1.8;
+      color: #333;
+      margin-bottom: 16px;
+    }
+    .narrative em {
+      color: var(--brand);
+      font-style: normal;
+      font-weight: 600;
+    }
+
+    .what-they-see {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 14px 18px;
+      margin: 16px 0;
+    }
+    .what-they-see__label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #666;
+      margin-bottom: 6px;
+      font-weight: 700;
+    }
+    .what-they-see ul {
+      margin: 0;
+      padding: 0 0 0 18px;
+      font-size: 13px;
+      color: #444;
+    }
+    .what-they-see li { margin-bottom: 4px; }
+
+    .talk-track {
+      background: #eff6ff;
+      border-left: 4px solid var(--sf-blue);
+      border-radius: 0 6px 6px 0;
+      padding: 12px 16px;
+      margin: 16px 0;
+      font-size: 13px;
+      color: var(--sf-dark);
+    }
+    .talk-track__label {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--sf-blue);
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+
+    .transition {
+      text-align: center;
+      padding: 16px;
+      font-size: 12px;
+      color: #999;
+      font-style: italic;
+    }
+
+    .closing {
+      background: #fff;
+      border: 1px solid #dddbda;
+      border-radius: 8px;
+      padding: 24px;
+      margin-top: 32px;
+    }
+    .closing h2 {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--sf-dark);
+      margin-bottom: 12px;
+    }
+    .closing ul { margin: 0 0 0 18px; }
+    .closing li { font-size: 13px; margin-bottom: 6px; }
+
+    .footer {
+      background: var(--sf-dark);
+      color: rgba(255,255,255,0.6);
+      text-align: center;
+      padding: 20px 24px;
+      font-size: 11px;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header__inner">
+    <span class="header__logo">MIZUHO CIB</span>
+    <span class="header__title">Demo Story</span>
+    <span class="header__subtitle">"Morning to Meeting"</span>
+    <div class="header__badges">
+      <span class="badge badge--header">Flow A</span>
+      <span class="badge badge--header">~8 min</span>
+      <span class="badge badge--header">Demo: Jun 15</span>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+
+<!-- Meta -->
+<dl class="story-meta">
+  <div>
+    <dt>Persona</dt>
+    <dd>Kenji Nakamura, Senior Coverage RM</dd>
+  </div>
+  <div>
+    <dt>Client</dt>
+    <dd>Sumitomo Corporation</dd>
+  </div>
+  <div>
+    <dt>Value Point</dt>
+    <dd>Reactive → Proactive in one morning</dd>
+  </div>
+  <div>
+    <dt>Products Shown</dt>
+    <dd>Agentforce, FSC, Data Cloud, Slack</dd>
+  </div>
+  <div>
+    <dt>Audience</dt>
+    <dd>CIB leadership + IT stakeholders</dd>
+  </div>
+  <div>
+    <dt>Duration</dt>
+    <dd>7-8 minutes</dd>
+  </div>
+</dl>
+
+<!-- Scene 1 -->
+<div class="scene">
+  <div class="scene__header">
+    <span class="scene__num">01</span>
+    <span class="scene__title">The Morning — Intelligence Without Effort</span>
+    <span class="scene__time">~2 min</span>
+  </div>
+  <div class="scene__body">
+    <p class="narrative">
+      It's 8:15am in Mizuho's Singapore office. Kenji Nakamura has a meeting with Sumitomo Corporation's Group Treasurer at 10am. He hasn't had time to prep — yesterday was consumed by a credit committee and three internal calls. He opens Salesforce.
+    </p>
+    <p class="narrative">
+      The moment he lands on Sumitomo's Client 360 page, <em>the work has already been done</em>. The Banker Assistant has analyzed Sumitomo's entire portfolio overnight and surfaced three things Kenji needs to know:
+    </p>
+
+    <div class="what-they-see">
+      <div class="what-they-see__label">On Screen</div>
+      <ul>
+        <li>Client Briefing Panel loads automatically — three cards visible</li>
+        <li><strong>Portfolio Signal:</strong> USD 200M bilateral loan maturing in 30 days</li>
+        <li><strong>Covenant Alert:</strong> Debt/EBITDA ratio at 3.8x — approaching 4.0x threshold</li>
+        <li><strong>Cross-Sell Trigger:</strong> FX hedge opportunity linked to the loan maturity</li>
+      </ul>
+    </div>
+
+    <div class="talk-track">
+      <div class="talk-track__label">Talk Track</div>
+      "Notice Kenji didn't search for anything. He didn't open a report. He didn't ask an analyst to prepare a brief. The system anticipated what he needs for today's meeting and surfaced it — proactively, automatically, before his first coffee."
+    </div>
+  </div>
+</div>
+
+<!-- Scene 2 -->
+<div class="scene">
+  <div class="scene__header">
+    <span class="scene__num">02</span>
+    <span class="scene__title">The Deep-Dive — Conversational Intelligence</span>
+    <span class="scene__time">~2 min</span>
+  </div>
+  <div class="scene__body">
+    <p class="narrative">
+      The covenant alert catches Kenji's eye. He needs to understand the detail before walking into the room. Instead of digging through credit reports or calling the analyst team, he asks the agent directly.
+    </p>
+    <p class="narrative">
+      Kenji types: <em>"Tell me more about the covenant alert on Sumitomo."</em>
+    </p>
+
+    <div class="what-they-see">
+      <div class="what-they-see__label">On Screen</div>
+      <ul>
+        <li>Agentforce copilot panel opens on the right</li>
+        <li>Agent responds with structured detail:
+          <ul>
+            <li>Covenant: Debt/EBITDA, threshold 4.0x</li>
+            <li>Current: 3.8x (up from 3.5x last quarter)</li>
+            <li>Trend: Deteriorating — driven by increased capex in mining division</li>
+            <li>Recommended talking point: "Discuss refinancing options before Q3 close"</li>
+          </ul>
+        </li>
+        <li>Agent cites specific FinancialAccount and signal records — not hallucinating</li>
+      </ul>
+    </div>
+
+    <p class="narrative">
+      Kenji then asks: <em>"What FX products would be relevant for the loan maturity?"</em>
+    </p>
+
+    <div class="what-they-see">
+      <div class="what-they-see__label">On Screen</div>
+      <ul>
+        <li>Agent responds with two product recommendations:</li>
+        <li><strong>Option 1:</strong> 12-month JPY/USD forward — matches maturity timeline, hedges Sumitomo's USD exposure</li>
+        <li><strong>Option 2:</strong> Cross-currency swap — better economics if they refinance in JPY</li>
+        <li>Both tied to Sumitomo's existing risk profile and prior FX history</li>
+      </ul>
+    </div>
+
+    <div class="talk-track">
+      <div class="talk-track__label">Talk Track</div>
+      "This is the shift from CRM as a system of record to CRM as a system of intelligence. Kenji didn't spend an hour pulling data from three systems. The agent connected the dots — loan maturity, covenant pressure, and hedging opportunity — in one conversation. That's time back for your RMs to spend with clients, not with spreadsheets."
+    </div>
+  </div>
+</div>
+
+<div class="transition">— Kenji closes his laptop and walks to the meeting room at 9:55am —</div>
+
+<!-- Scene 3 -->
+<div class="scene">
+  <div class="scene__header">
+    <span class="scene__num">03</span>
+    <span class="scene__title">The Meeting — Informed and Proactive</span>
+    <span class="scene__time">~30 sec (narrative only)</span>
+  </div>
+  <div class="scene__body">
+    <p class="narrative">
+      Kenji walks into the meeting <em>informed, prepared, and proactive</em>. He opens the conversation by referencing the loan maturity — something the Treasurer hadn't raised yet. He asks about their hedging appetite and mentions the FX forward option. The Treasurer is impressed: "You're ahead of us on this."
+    </p>
+    <p class="narrative">
+      This is the moment the audience should feel: <em>the RM is leading the conversation, not reacting to it</em>. That's the shift from reactive to proactive. That's what Agentforce enables.
+    </p>
+
+    <div class="talk-track">
+      <div class="talk-track__label">Talk Track</div>
+      "We're not showing you what happened in the meeting — you know what good client meetings look like. What matters is that Kenji walked in with the right context, the right talking points, and the right product recommendations. He didn't need an analyst. He didn't need a pre-meeting call with product specialists. The agent did the prep."
+    </div>
+  </div>
+</div>
+
+<!-- Scene 4 -->
+<div class="scene">
+  <div class="scene__header">
+    <span class="scene__num">04</span>
+    <span class="scene__title">Post-Meeting — Zero-Admin Capture</span>
+    <span class="scene__time">~2.5 min</span>
+  </div>
+  <div class="scene__body">
+    <p class="narrative">
+      Kenji returns to his desk at 11am. Normally this is where he'd spend 20 minutes filling in call reports, creating follow-up tasks, and sending emails. Instead, he opens the copilot and says:
+    </p>
+    <p class="narrative">
+      <em>"Capture meeting notes — we discussed the bilateral loan maturity and covenant situation. They're interested in a 12-month JPY/USD forward. Need to loop in S&amp;T desk by Thursday. Next meeting in two weeks to present formal proposal."</em>
+    </p>
+
+    <div class="what-they-see">
+      <div class="what-they-see__label">On Screen</div>
+      <ul>
+        <li>Agent confirms: "Meeting captured. Here's what I've done:"</li>
+        <li><strong>Meeting Note:</strong> Created with structured summary, linked to Sumitomo + Treasurer contact</li>
+        <li><strong>Task 1:</strong> "Send FX forward proposal to S&T desk" — assigned to S&T liaison, due Thursday</li>
+        <li><strong>Task 2:</strong> "Prepare formal hedging proposal" — assigned to Kenji, due 2 weeks</li>
+        <li><strong>Follow-up:</strong> Next meeting scheduled for June 29</li>
+        <li><strong>Activity:</strong> Logged on Account timeline immediately</li>
+      </ul>
+    </div>
+
+    <p class="narrative">
+      Kenji refreshes the Account page. The timeline shows the activity. The tasks are in his queue. The S&amp;T desk has already received a Slack notification in the deal room channel.
+    </p>
+
+    <div class="what-they-see">
+      <div class="what-they-see__label">On Screen (optional — Slack)</div>
+      <ul>
+        <li>Slack deal room channel: automated message with meeting context</li>
+        <li>"Kenji met with Sumitomo re: loan maturity. Client interested in 12-month JPY/USD forward. Action needed by Thursday."</li>
+      </ul>
+    </div>
+
+    <div class="talk-track">
+      <div class="talk-track__label">Talk Track</div>
+      "Zero forms. Zero data entry. Kenji spoke naturally about his meeting and the system did the rest — structured notes, tasks with due dates, activity logged, S&T notified. This is what makes bankers actually want to use CRM. Not because they have to capture notes, but because the system captures them and does something intelligent with the information."
+    </div>
+  </div>
+</div>
+
+<!-- Scene 5 -->
+<div class="scene">
+  <div class="scene__header">
+    <span class="scene__num">05</span>
+    <span class="scene__title">The Close — From Obligation to Intelligence</span>
+    <span class="scene__time">~1 min</span>
+  </div>
+  <div class="scene__body">
+    <p class="narrative">
+      Pull back from the demo. Summarize the transformation:
+    </p>
+
+    <div class="what-they-see">
+      <div class="what-they-see__label">Summary Slide / Verbal Close</div>
+      <ul>
+        <li><strong>Before:</strong> 45 min manual meeting prep + 20 min post-meeting data entry = 65 min per client meeting</li>
+        <li><strong>After:</strong> 0 min prep (agent does it) + 30 sec capture (natural language) = under 1 min</li>
+        <li><strong>Bonus:</strong> Cross-sell signal that would have been missed entirely — now surfaced automatically</li>
+      </ul>
+    </div>
+
+    <div class="talk-track">
+      <div class="talk-track__label">Talk Track</div>
+      "This isn't a future vision. Everything you just saw runs on Salesforce Agentforce today. BBVA runs their corporate bank on this platform. Barclays has 6,000 institutional users. Nomura uses it for client analytics. Your direct competitor MUFG has already deployed it for global CIB. The question isn't whether this technology works — it's whether Mizuho leads this transformation in APAC, or follows it."
+    </div>
+  </div>
+</div>
+
+<!-- Closing -->
+<div class="closing">
+  <h2>Proof Points to Reference</h2>
+  <ul>
+    <li><strong>BBVA</strong> — Runs corporate bank on Salesforce FSC. "Much cleaner than retail." Jobs-to-be-done methodology applied to RM workflows.</li>
+    <li><strong>Barclays</strong> — 6,000 users across institutional sales, research, client ops, legal.</li>
+    <li><strong>Nomura</strong> — 1,000 institutional sales users. 360 client view with revenue/profitability analytics.</li>
+    <li><strong>MUFG</strong> — Direct competitor. Salesforce FSC deployed for global CIB.</li>
+    <li><strong>Citizens Bank</strong> — "Digital Butler" with AI. Expects 60-80% reduction in cycle times.</li>
+    <li><strong>CaixaBank</strong> — 300+ staff using AI agents. 20% productivity improvement.</li>
+  </ul>
+</div>
+
+<div class="closing">
+  <h2>Transition Questions for Discovery</h2>
+  <ul>
+    <li>"How much time do your Singapore RMs spend on meeting prep today?"</li>
+    <li>"How is cross-sell intelligence shared between coverage and product desks currently?"</li>
+    <li>"What's the current process for routing a client opportunity from corporate banking to S&T?"</li>
+    <li>"How do you handle covenant monitoring — is that real-time or periodic?"</li>
+    <li>"What does your RM's CRM experience look like today? What do they actually use it for?"</li>
+  </ul>
+</div>
+
+</div><!-- /page -->
+
+<footer class="footer">
+  <p><strong>Mizuho CIB — Demo Story</strong> &middot; "Morning to Meeting" &middot; Flow A &middot; v1.0</p>
+  <p>Owner: Renz Valdeabella &middot; 2026-06-08 &middot; Internal only — not for external distribution</p>
+</footer>
+
+</body>
+</html>
