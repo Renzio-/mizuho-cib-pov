@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mizuho CIB — Technical Documentation | Salesforce POV</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.24.2/styles/salesforce-lightning-design-system.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Salesforce+Sans:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --sf-blue:  #0070d2;
+      --sf-dark:  #032d60;
+      --sf-teal:  #00a1e0;
+      --sf-cloud: #f3f2f2;
+      --brand:    #1e3a5f;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Salesforce Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--sf-cloud);
+      color: #181818;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    .header {
+      background: var(--sf-dark);
+      color: #fff;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .header__inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .header__logo {
+      background: var(--brand);
+      color: #fff;
+      font-weight: 700;
+      font-size: 12px;
+      padding: 4px 12px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+    }
+    .header__title { font-size: 16px; font-weight: 700; }
+    .header__subtitle { font-size: 13px; font-weight: 300; opacity: 0.8; }
+    .header__badges { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; }
+    .badge {
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 12px;
+      white-space: nowrap;
+    }
+    .badge--header {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: rgba(255,255,255,0.9);
+    }
+    .badge--status { background: #fde68a; color: #78350f; border: none; font-weight: 600; }
+
+    .page {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 28px 24px 60px;
+    }
+
+    /* Dashboard summary */
+    .dash {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    @media (max-width: 800px) { .dash { grid-template-columns: 1fr 1fr; } }
+
+    .stat-card {
+      background: #fff;
+      border: 1px solid #dddbda;
+      border-radius: 8px;
+      padding: 16px 20px;
+      text-align: center;
+    }
+    .stat-card__num {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--brand);
+    }
+    .stat-card__label {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #666;
+      margin-top: 4px;
+    }
+
+    /* Cards */
+    .card {
+      background: #fff;
+      border: 1px solid #dddbda;
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+    .card__head {
+      padding: 12px 20px;
+      border-bottom: 1px solid #dddbda;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card__icon {
+      background: var(--brand);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .card__title { font-size: 14px; font-weight: 700; color: var(--sf-dark); }
+    .card__subtitle { font-size: 12px; color: #666; margin-left: auto; }
+    .card__body { padding: 16px 20px; }
+
+    h2 { font-size: 15px; font-weight: 700; color: var(--sf-dark); margin-bottom: 12px; }
+    h3 { font-size: 13px; font-weight: 700; color: var(--sf-dark); margin: 20px 0 8px; }
+    p { margin-bottom: 10px; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin: 8px 0 16px;
+    }
+    th, td {
+      text-align: left;
+      padding: 8px 12px;
+      border-bottom: 1px solid #e5e5e5;
+      vertical-align: top;
+    }
+    th {
+      background: #f8f8f8;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #555;
+    }
+    td.label { font-weight: 600; color: #333; }
+
+    pre {
+      background: var(--sf-dark);
+      color: #e2e8f0;
+      border-radius: 6px;
+      padding: 16px;
+      overflow-x: auto;
+      font-size: 12px;
+      line-height: 1.5;
+      margin: 12px 0;
+    }
+    code { font-family: 'SFMono-Regular', Consolas, monospace; font-size: 12px; }
+    :not(pre) > code {
+      background: #f3f2f2;
+      border: 1px solid #dddbda;
+      padding: 1px 5px;
+      border-radius: 3px;
+    }
+
+    .callout {
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin: 12px 0;
+      font-size: 13px;
+    }
+    .callout--info { background: #eff6ff; border-left: 4px solid var(--sf-blue); color: var(--sf-dark); }
+    .callout--warn { background: #fffbeb; border-left: 4px solid #f59e0b; color: #78350f; }
+    .callout strong { display: block; margin-bottom: 2px; }
+
+    ul { margin: 8px 0 16px 20px; }
+    li { margin-bottom: 4px; font-size: 13px; }
+
+    .footer {
+      background: var(--sf-dark);
+      color: rgba(255,255,255,0.6);
+      text-align: center;
+      padding: 20px 24px;
+      font-size: 11px;
+    }
+  </style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header__inner">
+    <span class="header__logo">MIZUHO CIB</span>
+    <span class="header__title">Technical Documentation</span>
+    <span class="header__subtitle">Banker Assistant Agent POV</span>
+    <div class="header__badges">
+      <span class="badge badge--header">v1.0</span>
+      <span class="badge badge--header">2026-06-08</span>
+      <span class="badge badge--header">Org: Mizuho CIB</span>
+      <span class="badge badge--status">Draft</span>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+
+<!-- Stats -->
+<div class="dash">
+  <div class="stat-card">
+    <div class="stat-card__num">4</div>
+    <div class="stat-card__label">Components</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card__num">1</div>
+    <div class="stat-card__label">LWC</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card__num">1</div>
+    <div class="stat-card__label">Agent</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-card__num">1</div>
+    <div class="stat-card__label">Flow</div>
+  </div>
+</div>
+
+<!-- Component Index -->
+<div class="card">
+  <div class="card__head">
+    <span class="card__title">Component Index</span>
+  </div>
+  <div class="card__body">
+    <table>
+      <thead>
+        <tr><th>Component</th><th>Type</th><th>Flow Steps</th><th>Spec</th></tr>
+      </thead>
+      <tbody>
+        <tr><td class="label">mizuhoBankerBriefing</td><td>LWC</td><td>Steps 1-2</td><td>SPEC_04</td></tr>
+        <tr><td class="label">Banker Assistant Agent</td><td>Agentforce</td><td>Steps 1-5</td><td>SPEC_03</td></tr>
+        <tr><td class="label">Post-Meeting Capture</td><td>Flow</td><td>Step 5</td><td>SPEC_05</td></tr>
+        <tr><td class="label">MZH Data Model</td><td>Objects/Fields</td><td>All</td><td>SPEC_01</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Component 1: LWC -->
+<div class="card">
+  <div class="card__head">
+    <span class="card__icon">1</span>
+    <span class="card__title">mizuhoBankerBriefing LWC</span>
+    <span class="card__subtitle">SPEC_04 &middot; Flow A Steps 1-2</span>
+  </div>
+  <div class="card__body">
+    <p>Client briefing panel that renders on the Account record page. Displays AI-generated intelligence in three sections: portfolio signals, covenant alerts, and cross-sell triggers.</p>
+
+    <h3>Purpose</h3>
+    <p>Gives the RM a single scannable view of everything they need before a client meeting — without asking the agent. The LWC acts as the "always-on" intelligence layer while the agent handles interactive Q&A.</p>
+
+    <h3>Data Sources</h3>
+    <table>
+      <thead><tr><th>Section</th><th>Object</th><th>Key Fields</th></tr></thead>
+      <tbody>
+        <tr><td>Portfolio Signals</td><td><code>MZH_PortfolioSignal__c</code></td><td>Signal_Type__c, Amount__c, Maturity_Date__c, Description__c</td></tr>
+        <tr><td>Covenant Alerts</td><td><code>MZH_CovenantAlert__c</code></td><td>Covenant_Type__c, Current_Ratio__c, Threshold__c, Status__c</td></tr>
+        <tr><td>Cross-Sell Triggers</td><td><code>MZH_CrossSellTrigger__c</code></td><td>Product_Type__c, Opportunity_Value__c, Rationale__c</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Behaviour</h3>
+    <ul>
+      <li>Loads on Account record page via Lightning App Builder</li>
+      <li>Queries data on <code>connectedCallback()</code> filtered by current Account ID</li>
+      <li>Sections collapse if no data — no empty cards</li>
+      <li>Alert cards show severity badge (High/Medium/Low)</li>
+      <li>Cross-sell cards include a "Discuss with Agent" action button that opens copilot with context</li>
+    </ul>
+
+    <h3>SLDS2 Compliance</h3>
+    <ul>
+      <li>All styling via <code>var(--slds-*)</code> design tokens</li>
+      <li>Uses <code>lightning-card</code>, <code>lightning-badge</code>, <code>lightning-icon</code> base components</li>
+      <li>Layout via <code>slds-grid</code> / <code>slds-col</code> utilities</li>
+      <li>No hardcoded colours, font sizes, or spacing values</li>
+    </ul>
+
+    <div class="callout callout--info">
+      <strong>Dependency</strong>
+      Requires SPEC_01 (data model) and SPEC_02 (sample data) deployed first. Agent integration (copilot button) requires SPEC_03.
+    </div>
+  </div>
+</div>
+
+<!-- Component 2: Agent -->
+<div class="card">
+  <div class="card__head">
+    <span class="card__icon">2</span>
+    <span class="card__title">Banker Assistant Agent</span>
+    <span class="card__subtitle">SPEC_03 &middot; Flow A Steps 1-5</span>
+  </div>
+  <div class="card__body">
+    <p>The core Agentforce agent. Handles three conversational topics: client briefing generation, meeting capture, and cross-sell intelligence. This is the highest-value component in the demo.</p>
+
+    <h3>Agent Topics</h3>
+    <table>
+      <thead><tr><th>Topic</th><th>Trigger Phrases</th><th>Actions</th></tr></thead>
+      <tbody>
+        <tr>
+          <td class="label">Client Briefing</td>
+          <td>"Prepare my briefing", "What should I know about [client]", "Brief me on [client]"</td>
+          <td>Query MZH_PortfolioSignal__c, MZH_CovenantAlert__c, MZH_CrossSellTrigger__c, FinancialAccount. Return structured briefing.</td>
+        </tr>
+        <tr>
+          <td class="label">Meeting Capture</td>
+          <td>"Capture meeting notes", "Log my meeting", "Meeting summary"</td>
+          <td>Create MZH_MeetingNote__c, create Task records, log Activity. Invoke Post-Meeting Capture flow.</td>
+        </tr>
+        <tr>
+          <td class="label">Cross-Sell Intelligence</td>
+          <td>"What products for [client]", "Cross-sell opportunities", "FX products for this maturity"</td>
+          <td>Query MZH_CrossSellTrigger__c, FinancialAccount history. Return product recommendations with rationale.</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>Grounding Strategy</h3>
+    <ul>
+      <li>Agent grounded on FSC objects + MZH_* custom objects</li>
+      <li>All responses cite specific records (Account name, amounts, dates)</li>
+      <li>No hallucination — if data doesn't exist, agent responds "I don't have information on that"</li>
+      <li>Context awareness: agent knows current user's portfolio via running user assignment</li>
+    </ul>
+
+    <h3>Actions (Invocable)</h3>
+    <table>
+      <thead><tr><th>Action</th><th>Type</th><th>Input</th><th>Output</th></tr></thead>
+      <tbody>
+        <tr><td><code>generateBriefing</code></td><td>Apex</td><td>AccountId</td><td>Structured briefing object (signals, alerts, triggers)</td></tr>
+        <tr><td><code>captureMeetingNotes</code></td><td>Flow</td><td>AccountId, Summary text, Action items</td><td>MeetingNote ID, Task IDs</td></tr>
+        <tr><td><code>getProductRecommendations</code></td><td>Apex</td><td>AccountId, Product category</td><td>List of matched products with rationale</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Guard Rails</h3>
+    <ul>
+      <li>Agent cannot create or modify financial data (read-only on FinancialAccount)</li>
+      <li>Agent cannot access accounts outside current user's coverage assignment</li>
+      <li>All agent actions logged to Event Monitoring for MAS audit compliance</li>
+    </ul>
+
+    <div class="callout callout--warn">
+      <strong>Critical Path</strong>
+      This is the most complex component (~3 hrs). Requires data model + sample data deployed first. Test agent responses with real data before demo day.
+    </div>
+  </div>
+</div>
+
+<!-- Component 3: Flow -->
+<div class="card">
+  <div class="card__head">
+    <span class="card__icon">3</span>
+    <span class="card__title">Post-Meeting Capture Flow</span>
+    <span class="card__subtitle">SPEC_05 &middot; Flow A Step 5</span>
+  </div>
+  <div class="card__body">
+    <p>Autolaunched flow triggered by the Banker Assistant Agent after meeting capture. Creates structured records from the agent's parsed meeting notes.</p>
+
+    <h3>Flow Logic</h3>
+    <table>
+      <thead><tr><th>Step</th><th>Action</th><th>Detail</th></tr></thead>
+      <tbody>
+        <tr><td>1</td><td>Create MZH_MeetingNote__c</td><td>Meeting summary, date, attendees (from agent parsed input)</td></tr>
+        <tr><td>2</td><td>Create Task records</td><td>One per action item extracted. Due dates inferred from text ("by Thursday" → next Thursday). Assigned to named users or coverage team.</td></tr>
+        <tr><td>3</td><td>Log Activity</td><td>Event/Task linked to Account + Contact records</td></tr>
+        <tr><td>4</td><td>Slack notification (optional)</td><td>Post to deal room channel if cross-sell action identified</td></tr>
+        <tr><td>5</td><td>Schedule follow-up</td><td>Create future Event based on agent suggestion or default (1 week)</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Input Variables</h3>
+    <table>
+      <thead><tr><th>Variable</th><th>Type</th><th>Source</th></tr></thead>
+      <tbody>
+        <tr><td><code>accountId</code></td><td>Text</td><td>Agent context (current Account)</td></tr>
+        <tr><td><code>meetingSummary</code></td><td>Text</td><td>Agent-parsed from RM conversation</td></tr>
+        <tr><td><code>actionItems</code></td><td>Text Collection</td><td>Agent-extracted action items</td></tr>
+        <tr><td><code>attendeeContactIds</code></td><td>Text Collection</td><td>Matched from agent conversation or defaults to primary contact</td></tr>
+        <tr><td><code>crossSellIdentified</code></td><td>Boolean</td><td>Whether a product opportunity was discussed</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Error Handling</h3>
+    <ul>
+      <li>If Slack workspace unavailable: skip notification, log warning, continue</li>
+      <li>If contact not found: create note without attendee link, flag for manual update</li>
+      <li>If task assignee not found: assign to running user with note</li>
+    </ul>
+
+    <div class="callout callout--info">
+      <strong>Slack Integration</strong>
+      Slack notification is non-blocking. If no workspace configured, the flow completes successfully without it. Demo can show this with or without Slack.
+    </div>
+  </div>
+</div>
+
+<!-- Component 4: Data Model -->
+<div class="card">
+  <div class="card__head">
+    <span class="card__icon">4</span>
+    <span class="card__title">MZH Data Model</span>
+    <span class="card__subtitle">SPEC_01 &middot; All Steps</span>
+  </div>
+  <div class="card__body">
+    <p>Custom objects and fields that extend FSC standard objects to support portfolio intelligence, covenant monitoring, and meeting capture.</p>
+
+    <h3>Custom Objects</h3>
+    <table>
+      <thead><tr><th>Object</th><th>Label</th><th>Key Fields</th><th>Relationship</th></tr></thead>
+      <tbody>
+        <tr>
+          <td><code>MZH_PortfolioSignal__c</code></td>
+          <td>Portfolio Signal</td>
+          <td>Signal_Type__c (picklist), Amount__c (currency), Maturity_Date__c (date), Description__c (text), Severity__c (picklist)</td>
+          <td>Lookup → Account</td>
+        </tr>
+        <tr>
+          <td><code>MZH_CovenantAlert__c</code></td>
+          <td>Covenant Alert</td>
+          <td>Covenant_Type__c (picklist), Current_Ratio__c (number), Threshold__c (number), Status__c (picklist), Trend__c (picklist)</td>
+          <td>Lookup → Account, Lookup → FinancialAccount</td>
+        </tr>
+        <tr>
+          <td><code>MZH_CrossSellTrigger__c</code></td>
+          <td>Cross-Sell Trigger</td>
+          <td>Product_Type__c (picklist), Opportunity_Value__c (currency), Rationale__c (long text), Source_Signal__c (lookup)</td>
+          <td>Lookup → Account, Lookup → MZH_PortfolioSignal__c</td>
+        </tr>
+        <tr>
+          <td><code>MZH_MeetingNote__c</code></td>
+          <td>Meeting Note</td>
+          <td>Summary__c (long text), Meeting_Date__c (datetime), Action_Count__c (number), Next_Meeting__c (date)</td>
+          <td>Lookup → Account, Lookup → Contact</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <h3>FSC Standard Objects Used</h3>
+    <table>
+      <thead><tr><th>Object</th><th>Configuration</th></tr></thead>
+      <tbody>
+        <tr><td><code>Account</code></td><td>RecordType: CIB_Client. Custom fields: MZH_Coverage_Team__c, MZH_Relationship_Tier__c</td></tr>
+        <tr><td><code>FinancialAccount</code></td><td>Used as-is. Product types via picklist: Bilateral Loan, FX Facility, Trade Finance, Treasury.</td></tr>
+        <tr><td><code>AccountAccountRelation</code></td><td>Used as-is for entity hierarchy (parent/subsidiary)</td></tr>
+        <tr><td><code>Contact</code></td><td>Custom field: MZH_Client_Role__c (Treasurer, CFO, Head of Treasury, etc.)</td></tr>
+      </tbody>
+    </table>
+
+    <h3>Picklist Values</h3>
+    <table>
+      <thead><tr><th>Field</th><th>Values</th></tr></thead>
+      <tbody>
+        <tr><td>Signal_Type__c</td><td>Loan Maturity, Rate Change, Market Event, Regulatory Change</td></tr>
+        <tr><td>Severity__c</td><td>High, Medium, Low</td></tr>
+        <tr><td>Covenant_Type__c</td><td>Debt/EBITDA, Interest Coverage, Net Leverage, Current Ratio</td></tr>
+        <tr><td>Status__c (Covenant)</td><td>Healthy, Approaching, Breached</td></tr>
+        <tr><td>Trend__c</td><td>Improving, Stable, Deteriorating</td></tr>
+        <tr><td>Product_Type__c</td><td>FX Forward, Interest Rate Swap, Cross-Currency Swap, Trade Finance, DCM</td></tr>
+      </tbody>
+    </table>
+
+    <div class="callout callout--warn">
+      <strong>[ASSUMPTION] Object Prefix</strong>
+      Using <code>MZH_</code> prefix. Verify no namespace conflict in the target org before deployment.
+    </div>
+  </div>
+</div>
+
+</div><!-- /page -->
+
+<footer class="footer">
+  <p><strong>Mizuho CIB — Technical Documentation</strong> &middot; v1.0 &middot; 2026-06-08</p>
+  <p>Owner: Renz Valdeabella &middot; Org: Mizuho CIB &middot; Internal only</p>
+</footer>
+
+</body>
+</html>

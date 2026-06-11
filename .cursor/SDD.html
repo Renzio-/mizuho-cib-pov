@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mizuho CIB — Banker Assistant Agent POV | SDD</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.24.2/styles/salesforce-lightning-design-system.min.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Salesforce+Sans:wght@300;400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --sf-blue:  #0070d2;
+      --sf-dark:  #032d60;
+      --sf-teal:  #00a1e0;
+      --sf-cloud: #f3f2f2;
+      --brand:    #1e3a5f;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Salesforce Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: var(--sf-cloud);
+      color: #181818;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* ── Header ── */
+    .header {
+      background: var(--sf-dark);
+      color: #fff;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    }
+    .header__inner {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 14px 24px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .header__logo {
+      background: var(--brand);
+      color: #fff;
+      font-weight: 700;
+      font-size: 12px;
+      padding: 4px 12px;
+      border-radius: 4px;
+      letter-spacing: 0.5px;
+    }
+    .header__title {
+      font-size: 16px;
+      font-weight: 700;
+    }
+    .header__subtitle {
+      font-size: 13px;
+      font-weight: 300;
+      opacity: 0.8;
+    }
+    .header__badges {
+      margin-left: auto;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .badge {
+      font-size: 11px;
+      padding: 3px 10px;
+      border-radius: 12px;
+      white-space: nowrap;
+    }
+    .badge--header {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: rgba(255,255,255,0.9);
+    }
+    .badge--status { background: #fde68a; color: #78350f; border: none; font-weight: 600; }
+    .badge--success { background: #bbf7d0; color: #14532d; }
+    .badge--warning { background: #fde68a; color: #78350f; }
+    .badge--error { background: #fecdd3; color: #9f1239; }
+    .badge--info { background: #bfdbfe; color: var(--sf-dark); }
+    .badge--not-started { background: #e5e7eb; color: #374151; }
+
+    /* ── Page ── */
+    .page {
+      max-width: 1120px;
+      margin: 0 auto;
+      padding: 28px 24px 60px;
+    }
+
+    /* ── Dashboard Grid (top) ── */
+    .dash {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+    @media (max-width: 800px) {
+      .dash { grid-template-columns: 1fr; }
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: #fff;
+      border: 1px solid #dddbda;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .card--full { grid-column: 1 / -1; }
+    .card__head {
+      padding: 12px 20px;
+      border-bottom: 1px solid #dddbda;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .card__num {
+      background: var(--brand);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .card__title {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--sf-dark);
+    }
+    .card__body {
+      padding: 16px 20px;
+    }
+
+    /* ── Section (full-width below dash) ── */
+    .section {
+      margin-bottom: 24px;
+    }
+
+    /* ── Typography ── */
+    h2 { font-size: 15px; font-weight: 700; color: var(--sf-dark); margin-bottom: 12px; }
+    h3 { font-size: 13px; font-weight: 700; color: var(--sf-dark); margin: 20px 0 8px; }
+    p { margin-bottom: 10px; }
+    blockquote {
+      border-left: 4px solid var(--brand);
+      padding: 12px 16px;
+      background: #fafafa;
+      margin: 12px 0;
+      font-style: italic;
+      font-size: 13px;
+    }
+
+    /* ── Tables ── */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+      margin: 8px 0 16px;
+    }
+    th, td {
+      text-align: left;
+      padding: 8px 12px;
+      border-bottom: 1px solid #e5e5e5;
+      vertical-align: top;
+    }
+    th {
+      background: #f8f8f8;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #555;
+    }
+    td.label {
+      font-weight: 600;
+      width: 140px;
+      color: #333;
+      white-space: nowrap;
+    }
+
+    /* ── Key-value pairs (for context card) ── */
+    .kv { display: grid; grid-template-columns: 130px 1fr; gap: 4px 12px; font-size: 13px; }
+    .kv dt { font-weight: 600; color: #333; padding: 4px 0; }
+    .kv dd { padding: 4px 0; }
+
+    /* ── Callouts ── */
+    .callout {
+      border-radius: 6px;
+      padding: 12px 16px;
+      margin: 12px 0;
+      font-size: 13px;
+    }
+    .callout--warn {
+      background: #fffbeb;
+      border-left: 4px solid #f59e0b;
+      color: #78350f;
+    }
+    .callout--info {
+      background: #eff6ff;
+      border-left: 4px solid var(--sf-blue);
+      color: var(--sf-dark);
+    }
+    .callout strong { display: block; margin-bottom: 2px; }
+
+    /* ── Journey Flow ── */
+    .journey {
+      display: flex;
+      align-items: stretch;
+      gap: 0;
+      margin: 16px 0;
+      flex-wrap: wrap;
+    }
+    .journey__step {
+      flex: 1;
+      min-width: 140px;
+      position: relative;
+      padding: 16px 12px;
+      text-align: center;
+      background: #fff;
+      border: 1px solid #dddbda;
+      border-radius: 8px;
+      margin-right: 32px;
+    }
+    .journey__step:last-child { margin-right: 0; }
+    .journey__step::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      right: -22px;
+      width: 14px;
+      height: 2px;
+      background: var(--brand);
+    }
+    .journey__step:last-child::after { display: none; }
+    .journey__num {
+      background: var(--brand);
+      color: #fff;
+      font-size: 10px;
+      font-weight: 700;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 6px;
+    }
+    .journey__title { font-size: 12px; font-weight: 700; color: var(--sf-dark); }
+    .journey__desc { font-size: 11px; color: #666; margin-top: 4px; }
+
+    /* ── Code ── */
+    pre {
+      background: var(--sf-dark);
+      color: #e2e8f0;
+      border-radius: 6px;
+      padding: 16px;
+      overflow-x: auto;
+      font-size: 12px;
+      line-height: 1.5;
+      margin: 12px 0;
+    }
+    code {
+      font-family: 'SFMono-Regular', Consolas, monospace;
+      font-size: 12px;
+    }
+    :not(pre) > code {
+      background: #f3f2f2;
+      border: 1px solid #dddbda;
+      padding: 1px 5px;
+      border-radius: 3px;
+    }
+
+    /* ── Checklist ── */
+    .checklist { list-style: none; padding: 0; }
+    .checklist li {
+      padding: 5px 0 5px 26px;
+      position: relative;
+      font-size: 13px;
+    }
+    .checklist li::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 8px;
+      width: 14px;
+      height: 14px;
+      border: 2px solid #ccc;
+      border-radius: 3px;
+    }
+
+    /* ── Footer ── */
+    .footer {
+      background: var(--sf-dark);
+      color: rgba(255,255,255,0.6);
+      text-align: center;
+      padding: 20px 24px;
+      font-size: 11px;
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══════ HEADER ═══════ -->
+<header class="header">
+  <div class="header__inner">
+    <span class="header__logo">MIZUHO CIB</span>
+    <span class="header__title">Banker Assistant Agent POV</span>
+    <span class="header__subtitle">Solution Design Document</span>
+    <div class="header__badges">
+      <span class="badge badge--header">v1.0</span>
+      <span class="badge badge--header">2026-06-08</span>
+      <span class="badge badge--header">Demo: Jun 15</span>
+      <span class="badge badge--header">Org: Mizuho CIB</span>
+      <span class="badge badge--status">Draft</span>
+    </div>
+  </div>
+</header>
+
+<div class="page">
+
+<!-- ═══════ DASHBOARD GRID ═══════ -->
+<div class="dash">
+
+  <!-- Card: Customer Context -->
+  <div class="card">
+    <div class="card__head">
+      <span class="card__num">1</span>
+      <span class="card__title">Customer Context</span>
+    </div>
+    <div class="card__body">
+      <dl class="kv">
+        <dt>Company</dt>
+        <dd>Mizuho Bank, Singapore Branch</dd>
+        <dt>Vertical</dt>
+        <dd>Corporate &amp; Investment Banking</dd>
+        <dt>Persona</dt>
+        <dd>Coverage RM (Singapore hub)</dd>
+        <dt>Demo Date</dt>
+        <dd>2026-06-15</dd>
+        <dt>Revenue</dt>
+        <dd>~JPY 2.7T (~USD 18B)</dd>
+        <dt>Employees</dt>
+        <dd>~53,000 globally</dd>
+      </dl>
+    </div>
+  </div>
+
+  <!-- Card: POV Objectives -->
+  <div class="card">
+    <div class="card__head">
+      <span class="card__num">2</span>
+      <span class="card__title">POV Objectives</span>
+    </div>
+    <div class="card__body">
+      <table>
+        <tr><td class="label">1.</td><td><strong>Proactive Intelligence</strong> — RM gets AI briefing with signals &amp; alerts, no manual prep</td></tr>
+        <tr><td class="label">2.</td><td><strong>Zero-Admin Capture</strong> — Post-meeting notes, tasks, CRM logging in &lt;30s</td></tr>
+        <tr><td class="label">3.</td><td><strong>Cross-Sell Detection</strong> — Agent surfaces product opportunity RM would have missed</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- Card: Why Now -->
+  <div class="card">
+    <div class="card__head">
+      <span class="card__num">3</span>
+      <span class="card__title">"Why Now" Signals</span>
+    </div>
+    <div class="card__body">
+      <table>
+        <tr><td class="label">MUFG Gap</td><td>Already deployed Salesforce FSC for global CIB. Competitive gap widening.</td></tr>
+        <tr><td class="label">MAS Regs</td><td>TRM 2025 update requires governed AI. Can't bolt onto fragmented systems.</td></tr>
+        <tr><td class="label">APAC Scale</td><td>CIB expansion needs platform intelligence. Can't scale manually.</td></tr>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /dash -->
+
+<!-- ═══════ FULL-WIDTH SECTIONS ═══════ -->
+
+<!-- Problem Statement -->
+<div class="section">
+  <div class="card card--full">
+    <div class="card__head">
+      <span class="card__title">Customer Problem Statement</span>
+    </div>
+    <div class="card__body">
+      <blockquote>
+        Mizuho's Singapore CIB RMs are reactive, not proactive. Client intel is scattered across CRM, portals, compliance systems, and email. Hours are lost weekly on manual meeting prep, call notes, and task tracking. The CRM is a system of obligation ("bankers go in there to capture notes because they have to"), not a system of intelligence. Meanwhile, MUFG has already deployed Salesforce FSC across global CIB — the competitive gap is widening.
+      </blockquote>
+      <div class="callout callout--info">
+        <strong>Pipeline Context</strong>
+        Active Agentforce for Sales opportunity (Mizuho +500 seats, Q4 FY26). This demo aligns to accelerate.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Demo Flow -->
+<div class="section">
+  <div class="card card--full">
+    <div class="card__head">
+      <span class="card__num">4</span>
+      <span class="card__title">Demo Flow: "Morning to Meeting"</span>
+    </div>
+    <div class="card__body">
+      <p><strong>Persona:</strong> Kenji Nakamura, Senior Coverage RM (Mizuho Singapore)<br/>
+      <strong>Value Point:</strong> RM's morning starts with AI briefing, walks into meeting prepared, post-meeting gets auto-capture — zero manual data entry.</p>
+
+      <h3>Journey</h3>
+      <div class="journey">
+        <div class="journey__step">
+          <div class="journey__num">1</div>
+          <div class="journey__title">Morning Briefing</div>
+          <div class="journey__desc">Agent surfaces today's client briefing with alerts &amp; signals</div>
+        </div>
+        <div class="journey__step">
+          <div class="journey__num">2</div>
+          <div class="journey__title">Prep Deep-Dive</div>
+          <div class="journey__desc">RM asks agent about covenant alert. Agent pulls portfolio data.</div>
+        </div>
+        <div class="journey__step">
+          <div class="journey__num">3</div>
+          <div class="journey__title">Cross-Sell Signal</div>
+          <div class="journey__desc">Agent identifies FX hedge from loan maturity. Suggests talking point.</div>
+        </div>
+        <div class="journey__step">
+          <div class="journey__num">4</div>
+          <div class="journey__title">Meeting</div>
+          <div class="journey__desc">RM meets client. Informed, prepared, proactive.</div>
+        </div>
+        <div class="journey__step">
+          <div class="journey__num">5</div>
+          <div class="journey__title">Post-Meeting</div>
+          <div class="journey__desc">Agent logs summary, assigns tasks, schedules follow-up.</div>
+        </div>
+      </div>
+
+      <h3>Demo Script</h3>
+      <table>
+        <thead>
+          <tr><th style="width:40px;">Step</th><th>Action</th><th>What the Audience Sees</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td>RM navigates to Client 360 for "Sumitomo Corporation"</td>
+            <td>Lightning page with briefing panel + Agentforce copilot sidebar</td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td>Briefing panel auto-loads</td>
+            <td>Portfolio signals: USD 200M loan maturing in 30 days. Covenant alert. FX cross-sell opportunity.</td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td>RM asks: "Tell me more about the covenant alert"</td>
+            <td>Agent responds with covenant terms, current ratio, trend, recommended talking point</td>
+          </tr>
+          <tr>
+            <td>4</td>
+            <td>RM asks: "What FX products for the loan maturity?"</td>
+            <td>Agent surfaces 2-3 derivative solutions with rationale</td>
+          </tr>
+          <tr>
+            <td>5</td>
+            <td>RM: "Capture meeting notes — discussed loan maturity, interested in 12-month JPY/USD forward, follow up with S&T by Thursday"</td>
+            <td>Agent creates meeting summary, assigns task to S&T, schedules follow-up, logs activity</td>
+          </tr>
+          <tr>
+            <td>6</td>
+            <td>RM refreshes Account timeline</td>
+            <td>Activity logged, tasks visible, next meeting suggested — zero forms touched</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout--warn">
+        <strong>[ASSUMPTION] Demo Client</strong>
+        Using "Sumitomo Corporation" as demo scenario client. Confirm appropriate or substitute with fictional entity.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Solution Architecture -->
+<div class="section">
+  <div class="card card--full">
+    <div class="card__head">
+      <span class="card__num">5</span>
+      <span class="card__title">Solution Architecture</span>
+    </div>
+    <div class="card__body">
+      <h3>Products Used</h3>
+      <table>
+        <thead>
+          <tr><th>Product</th><th>Purpose</th><th>Why</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Agentforce</strong></td><td>Banker Assistant — briefings, Q&A, meeting capture, tasks</td><td>Core value. Autonomous agent doing work for the banker.</td></tr>
+          <tr><td><strong>Financial Services Cloud</strong></td><td>Data model, Client 360, relationship hierarchy</td><td>Native CIB model. No custom object overhead.</td></tr>
+          <tr><td><strong>Data Cloud</strong></td><td>Unified client profile across products for agent grounding</td><td>Cross-product data without point-to-point integrations.</td></tr>
+          <tr><td><strong>Slack</strong></td><td>Post-meeting notification to S&T desk</td><td>Proves cross-desk collaboration in the ecosystem.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Architecture</h3>
+<pre>
+┌─────────────────────────────────────────────────────────────────┐
+│                     PRESENTATION LAYER                           │
+│   Lightning Page (Client 360)  ·  Agentforce Copilot  ·  Slack │
+└──────────────────────────────┬──────────────────────────────────┘
+                               │
+┌──────────────────────────────┴──────────────────────────────────┐
+│                       AGENTIC LAYER                              │
+│              BANKER ASSISTANT AGENT                              │
+│   Topics: Briefing  ·  Meeting Capture  ·  Cross-Sell           │
+│   Actions: Generate Briefing  ·  Log Notes  ·  Assign Tasks     │
+└──────────────────────────────┬──────────────────────────────────┘
+                               │
+┌──────────────────────────────┴──────────────────────────────────┐
+│                        DATA LAYER                                │
+│   FSC Objects          Data Cloud           Custom Objects       │
+│   Account, Contact     Unified Profile      MZH_Signal__c       │
+│   FinancialAccount     Cross-Product View   MZH_CovenantAlert__c│
+│   AcctAcctRelation                          MZH_MeetingNote__c  │
+└──────────────────────────────┬──────────────────────────────────┘
+                               │
+┌──────────────────────────────┴──────────────────────────────────┐
+│                     AUTOMATION LAYER                             │
+│   Flow: Post-Meeting Capture → notes + tasks + activity         │
+└─────────────────────────────────────────────────────────────────┘
+</pre>
+
+      <h3>Ruled Out</h3>
+      <table>
+        <thead><tr><th>Option</th><th>Reason</th></tr></thead>
+        <tbody>
+          <tr><td>Tableau Pulse</td><td>Out of scope — focused on agent value, not dashboards. Can add later.</td></tr>
+          <tr><td>MuleSoft / MCP</td><td>No live integration needed — Data Cloud + sample data simulates unified view.</td></tr>
+          <tr><td>Custom hierarchy objects</td><td>FSC AccountAccountRelation handles it natively.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout--info">
+        <strong>Key Positioning</strong>
+        Lead with intelligence and agentic layer — not a CRM replacement conversation. Salesforce as the AI brain on top of whatever Mizuho already runs.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Data Model -->
+<div class="section">
+  <div class="card card--full">
+    <div class="card__head">
+      <span class="card__num">6</span>
+      <span class="card__title">Data Model</span>
+    </div>
+    <div class="card__body">
+      <table>
+        <thead>
+          <tr><th>Object</th><th>Type</th><th>Purpose</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Account</td><td>Standard</td><td>Corporate client entity</td></tr>
+          <tr><td>Contact</td><td>Standard</td><td>Client decision-makers (Treasurer, CFO)</td></tr>
+          <tr><td>FinancialAccount</td><td>FSC Standard</td><td>Products — loans, FX, trade finance</td></tr>
+          <tr><td>AccountAccountRelation</td><td>FSC Standard</td><td>Entity hierarchy (parent/subsidiary)</td></tr>
+          <tr><td>MZH_PortfolioSignal__c</td><td>Custom</td><td>Maturity triggers, rate changes, market signals</td></tr>
+          <tr><td>MZH_CovenantAlert__c</td><td>Custom</td><td>Covenant threshold breaches, trend warnings</td></tr>
+          <tr><td>MZH_CrossSellTrigger__c</td><td>Custom</td><td>AI-identified cross-sell opportunities</td></tr>
+          <tr><td>MZH_MeetingNote__c</td><td>Custom</td><td>Structured meeting capture — summary, actions</td></tr>
+        </tbody>
+      </table>
+
+<pre>
+Account (1) ──→ (*) FinancialAccount
+    ├── (1) ──→ (*) MZH_PortfolioSignal__c
+    ├── (1) ──→ (*) MZH_CovenantAlert__c
+    ├── (1) ──→ (*) MZH_CrossSellTrigger__c
+    ├── (1) ──→ (*) MZH_MeetingNote__c
+    └── AccountAccountRelation ←→ Account (hierarchy)
+
+Contact (1) ──→ (*) MZH_MeetingNote__c (attendee)
+Task ──→ MZH_MeetingNote__c (follow-ups from meeting)
+</pre>
+
+      <div class="callout callout--warn">
+        <strong>[ASSUMPTION] Object Prefix</strong>
+        Using <code>MZH_</code> prefix for custom objects. Confirm no namespace conflict in the org.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Security & Compliance -->
+<div class="section">
+  <div class="card card--full">
+    <div class="card__head">
+      <span class="card__num">7</span>
+      <span class="card__title">Security &amp; Compliance</span>
+    </div>
+    <div class="card__body">
+      <table>
+        <thead><tr><th>Permission Set</th><th>Who</th><th>Access</th></tr></thead>
+        <tbody>
+          <tr><td><code>MZH_CIB_RM</code></td><td>Coverage RMs</td><td>CRUD on MZH_* objects, Client 360 page, Agent invocation</td></tr>
+          <tr><td><code>MZH_CIB_Admin</code></td><td>Demo admin / SE</td><td>All RM access + data scripts, flow mgmt, agent config</td></tr>
+        </tbody>
+      </table>
+
+      <h3>MAS Compliance Alignment</h3>
+      <table>
+        <tr><td class="label">Audit Trail</td><td>All agent actions logged via Event Monitoring + custom activity records</td></tr>
+        <tr><td class="label">Explainability</td><td>Agent responses grounded in specific data records (cited sources)</td></tr>
+        <tr><td class="label">Governance</td><td>Agent topics/actions defined in metadata — controlled, versioned, deployable</td></tr>
+        <tr><td class="label">Data Residency</td><td>All data within Salesforce APAC instance (Singapore)</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Design Decisions -->
+<div class="section">
+  <div class="card card--full">
+    <div class="card__head">
+      <span class="card__num">8</span>
+      <span class="card__title">Design Decisions</span>
+    </div>
+    <div class="card__body">
+      <table>
+        <thead><tr><th>#</th><th>Decision</th><th>Chosen</th><th>Rationale</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Client product model</td><td>FinancialAccount (FSC)</td><td>Native object, no custom overhead</td></tr>
+          <tr><td>2</td><td>How to surface intelligence</td><td>Agent-first + LWC summary</td><td>Matches "proactive" narrative</td></tr>
+          <tr><td>3</td><td>Meeting capture mechanism</td><td>Agent conversation</td><td>Zero-admin — RM speaks naturally, agent structures</td></tr>
+          <tr><td>4</td><td>Cross-sell signal source</td><td>Pre-computed records</td><td>Demo reliability — consistent output every run</td></tr>
+          <tr><td>5</td><td>Entity hierarchy</td><td>AccountAccountRelation (FSC)</td><td>Native. Handles parent/subsidiary with role types.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Spec Index -->
+<div class="section">
+  <div class="card card--full">
+    <div class="card__head">
+      <span class="card__num">9</span>
+      <span class="card__title">Spec Index</span>
+    </div>
+    <div class="card__body">
+      <table>
+        <thead><tr><th>Spec</th><th>Component</th><th>Flow Steps</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td><code>SPEC_00_PERMISSIONS</code></td><td>Permission sets, profiles</td><td>All</td><td><span class="badge badge--not-started">Not Started</span></td></tr>
+          <tr><td><code>SPEC_01_DATA_MODEL</code></td><td>FSC + custom objects (MZH_*)</td><td>All</td><td><span class="badge badge--not-started">Not Started</span></td></tr>
+          <tr><td><code>SPEC_02_SAMPLE_DATA</code></td><td>Demo scenario data</td><td>All</td><td><span class="badge badge--not-started">Not Started</span></td></tr>
+          <tr><td><code>SPEC_03_AGENTFORCE</code></td><td>Banker Assistant Agent</td><td>1-5</td><td><span class="badge badge--not-started">Not Started</span></td></tr>
+          <tr><td><code>SPEC_04_LWC_BRIEFING</code></td><td>Client Briefing Panel</td><td>1-2</td><td><span class="badge badge--not-started">Not Started</span></td></tr>
+          <tr><td><code>SPEC_05_MEETING_FLOW</code></td><td>Post-Meeting Auto-Capture</td><td>5</td><td><span class="badge badge--not-started">Not Started</span></td></tr>
+          <tr><td><code>SPEC_06_LIGHTNING_PAGE</code></td><td>RM Client View (assembly)</td><td>All</td><td><span class="badge badge--not-started">Not Started</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- Build Sequence -->
+<div class="section">
+  <div class="card card--full">
+    <div class="card__head">
+      <span class="card__num">10</span>
+      <span class="card__title">Build Sequence</span>
+    </div>
+    <div class="card__body">
+      <table>
+        <thead><tr><th style="width:50px;">Order</th><th>Spec</th><th>Deploys</th><th>Depends On</th><th style="width:70px;">Effort</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>SPEC_00</td><td>Permission sets</td><td>None</td><td>30 min</td></tr>
+          <tr><td>2</td><td>SPEC_01</td><td>Custom objects &amp; fields</td><td>SPEC_00</td><td>2 hrs</td></tr>
+          <tr><td>3</td><td>SPEC_02</td><td>Sample data</td><td>SPEC_01</td><td>1.5 hrs</td></tr>
+          <tr><td>4</td><td>SPEC_03</td><td>Agentforce agent</td><td>SPEC_01, 02</td><td>3 hrs</td></tr>
+          <tr><td>5</td><td>SPEC_04</td><td>Briefing LWC</td><td>SPEC_01</td><td>2 hrs</td></tr>
+          <tr><td>6</td><td>SPEC_05</td><td>Meeting capture flow</td><td>SPEC_01, 03</td><td>1.5 hrs</td></tr>
+          <tr><td>7</td><td>SPEC_06</td><td>Lightning page</td><td>SPEC_03, 04, 05</td><td>1 hr</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout--info">
+        <strong>Total: ~12 hours</strong>
+        Critical path is SPEC_03 (Agentforce agent). Start immediately after data model.
+      </div>
+
+<pre>
+# Deployment commands (in order)
+sf project deploy start --target-org "Mizuho CIB" --source-dir "force-app/main/default/permissionsets"
+sf project deploy start --target-org "Mizuho CIB" --source-dir "force-app/main/default/objects"
+sf apex run --target-org "Mizuho CIB" --file scripts/apex/loadSampleData.apex
+sf project deploy start --target-org "Mizuho CIB" --source-dir "force-app/main/default/agentDefinitions"
+sf project deploy start --target-org "Mizuho CIB" --source-dir "force-app/main/default/lwc/mizuhoBankerBriefing"
+sf project deploy start --target-org "Mizuho CIB" --source-dir "force-app/main/default/flows"
+sf project deploy start --target-org "Mizuho CIB" --source-dir "force-app/main/default/flexipages"
+</pre>
+    </div>
+  </div>
+</div>
+
+<!-- Acceptance Criteria -->
+<div class="section">
+  <div class="card card--full">
+    <div class="card__head">
+      <span class="card__num">11</span>
+      <span class="card__title">Acceptance Criteria</span>
+    </div>
+    <div class="card__body">
+      <ul class="checklist">
+        <li>All spec-level acceptance criteria checked off</li>
+        <li>Flow A runs end-to-end without errors in Mizuho CIB org</li>
+        <li>Agent generates client briefing with real org data (not hallucinated)</li>
+        <li>Agent captures meeting notes and creates follow-up tasks</li>
+        <li>Cross-sell signal appears in briefing without manual trigger</li>
+        <li>Demo data loaded and matches Mizuho CIB scenario</li>
+        <li>Lightning page renders all components correctly</li>
+        <li>No debug logs or errors visible during demo</li>
+        <li>Slack notification fires to deal room (or gracefully skipped)</li>
+        <li>"Sumitomo Corporation" appears with entity hierarchy and multi-product wallet</li>
+      </ul>
+
+      <div class="callout callout--warn">
+        <strong>Demo: June 15 (7 days)</strong>
+        SPEC_03 (Agentforce agent) is critical path — most complex, core value of the demo.
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /page -->
+
+<footer class="footer">
+  <p><strong>Mizuho CIB — Banker Assistant Agent POV</strong> &middot; SDD v1.0 &middot; 2026-06-08</p>
+  <p>Owner: Renz Valdeabella &middot; Org: Mizuho CIB &middot; Internal only</p>
+</footer>
+
+</body>
+</html>
